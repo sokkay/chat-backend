@@ -22,7 +22,10 @@ router.post(
             .not()
             .isEmpty()
             .not()
-            .isAlphanumeric(),
+            .isAlphanumeric()
+            .withMessage(
+                'El password debe contener al menos un caracter especial, mayúsculas, minúsculas y números'
+            ),
         validarCampos,
     ],
     crearUsuario
