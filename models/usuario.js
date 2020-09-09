@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 const UsuarioSchema = Schema({
-    nombre: {
+    name: {
         type: String,
         require: true,
     },
@@ -13,6 +13,21 @@ const UsuarioSchema = Schema({
     password: {
         type: String,
         require: true,
+    },
+    friends: {
+        type: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Usuario',
+                required: true,
+            },
+        ],
+    },
+    photoUrl: {
+        type: String,
+    },
+    description: {
+        type: String
     },
     online: {
         type: Boolean,

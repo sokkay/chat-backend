@@ -3,11 +3,14 @@ const bcrypt = require('bcryptjs');
 const Usuario = require('../models/usuario');
 const ServerError = require('../models/server-error');
 const { generarJWT } = require('../helpers/jwt');
+const usuario = require('../models/usuario');
 
 const crearUsuario = async (req, res = response, next) => {
     const { email, password } = req.body;
     try {
-        const existeEmail = await Usuario.findOne({ email });
+        const existeEmail = await Usuario.findOne({
+            email,
+        });
         if (existeEmail) {
             next(new ServerError('El correo ya esta registrado', 400));
         }
@@ -33,7 +36,9 @@ const crearUsuario = async (req, res = response, next) => {
 const login = async (req, res, next) => {
     const { email, password } = req.body;
     try {
-        const usuarioDB = await Usuario.findOne({ email });
+        const usuarioDB = await Usuario.findOne({ email })
+            .populate('friends', { name: 1, email: 1, online: 1 })
+            .exec();
         if (!usuarioDB) {
             next(new ServerError('La contraseña o email no es válida', 400));
             return;
@@ -43,6 +48,7 @@ const login = async (req, res, next) => {
             next(new ServerError('La contraseña o email no es válida', 400));
             return;
         }
+
         const token = await generarJWT(usuarioDB.id);
 
         return res.status(200).json({
